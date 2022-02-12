@@ -1,6 +1,6 @@
 from flask import Flask
+from flask import request
 from flask_sqlalchemy import SQLAlchemy
-
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -85,6 +85,17 @@ def verify_password(username, password):
     if check_password_hash(user.password, password):
         return username
 
+@app.route('/register', methods=['POST'])
+def register():
+    req = request.json
+    user = User(req['username'], generate_password_hash(req['password']))
+    if User.query.filter_by(username=user.username).first() != None:
+        return "User with the username already exists", 400
+    else:
+        db.session.add(user)
+        db.session.commit()
+    user = User.query.filter_by(username=user.username).first()
+    return {"username": user.username, "id": user.id}
 
 if __name__ == '__main__':
     db.create_all()
