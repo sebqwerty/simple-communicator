@@ -1,21 +1,25 @@
-from flask import Flask
-from flask import request
+from flask import Flask, request, send_file
 from flask_sqlalchemy import SQLAlchemy
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from werkzeug.utils import secure_filename
 from datetime import datetime
+import os
+import uuid
 
 app = Flask(__name__)
 
 auth = HTTPBasicAuth()
 
+UPLOAD_FOLDER = '/app/uploads' 
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db = SQLAlchemy(app)
 
 server_users_association_table = db.Table('association', db.Model.metadata,
-    db.Column('user_id', db.ForeignKey('users.id')),
-    db.Column('server_id', db.ForeignKey('servers.id'))
+    db.Column('user_id', db.ForeignKey('users.id'), primary_key=True),
+    db.Column('server_id', db.ForeignKey('servers.id'), primary_key=True)
 )
 
 
@@ -26,11 +30,14 @@ class User(db.Model):
     username = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(100))
     servers_owned = db.relationship("Server")
-    servers = db.relationship("Server", secondary=server_users_association_table)
+    servers = db.relationship("Server", secondary=server_users_association_table, back_populates="members")
 
     def __init__(self, name, password):
         self.username = name
         self.password = password
+    def is_a_member(self, server):
+        server = Server.query.get(server)
+        return server in self.servers or server in self.servers_owned
 
 class Server(db.Model):
     __tablename__ = "servers"
@@ -38,7 +45,7 @@ class Server(db.Model):
     name = db.Column(db.String(100))
     owner_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     owner = db.relationship("User", back_populates="servers_owned", uselist=False) #one to many
-    members = db.relationship("User", secondary=server_users_association_table)
+    members = db.relationship("User", secondary=server_users_association_table, back_populates="servers")
     messages = db.relationship("Message")
 
     def __init__(self, name, owner):
@@ -56,13 +63,14 @@ class Message(db.Model):
     date_time = db.Column(db.DateTime)
     text = db.Column(db.String(1000))
     file_id = db.Column(db.Integer, db.ForeignKey("files.id"))
-    file = db.relationship("File", uselist=False) #one to one
+    file = db.relationship("File", uselist=False, back_populates="message") #one to one
 
-    def __init__(self, server, user, text):
+    def __init__(self, server, user, text, file):
         self.server = server
         self.user = user
         date_time = datetime.now()
         self.text = text
+        self.file = file
 
 class File(db.Model):
     __tablename__ = "files"
@@ -70,12 +78,16 @@ class File(db.Model):
     is_image = db.Column(db.Boolean)
     name = db.Column(db.String(100))
     path = db.Column(db.String(100))
+    message = db.relationship("Message", uselist=False)
 
     def __init__(self, is_image, name, path):
         self.is_image = is_image
         self.name = name
         self.path = path
 
+
+def get_user(auth):
+    return User.query.filter_by(username=auth.current_user()).first()
 
 @auth.verify_password
 def verify_password(username, password):
@@ -88,14 +100,56 @@ def verify_password(username, password):
 @app.route('/register', methods=['POST'])
 def register():
     req = request.json
+    if req['username'] == "" or req['password'] == "":
+        return "No username or password", 400
     user = User(req['username'], generate_password_hash(req['password']))
     if User.query.filter_by(username=user.username).first() != None:
         return "User with the username already exists", 400
     else:
         db.session.add(user)
         db.session.commit()
-    user = User.query.filter_by(username=user.username).first()
-    return {"username": user.username, "id": user.id}
+        return {"username": user.username, "id": user.id}
+
+@app.route('/file/<id>', methods=['GET'])
+@auth.login_required
+def get_file(id):
+    file = File.query.get(id)
+    if not get_user(auth).is_a_member(file.message.server.id):
+        return "Not allowed", 403
+    try:
+        return send_file(file.path, attachment_filename=file.name)
+    except Exception as e:
+        return str(e)
+
+@app.route('/sendMessage', methods=['POST'])
+@auth.login_required
+def send_message():
+    server_id = request.form['server_id']
+    if not get_user(auth).is_a_member(server_id):
+        return "Not allowed", 403
+
+    message_text = request.form['text']
+    if 'file' in request.files:
+        file = request.files['file']
+    if file:
+        filename = secure_filename(file.filename)
+        saved_filename = str(uuid.uuid4())
+        path = os.path.join(app.config['UPLOAD_FOLDER'], saved_filename)
+        file.save(path)
+        file_db = File(False, filename, path)
+        db.session.add(file_db)
+    message = Message(Server.query.get(server_id), get_user(auth), message_text, file_db)
+    db.session.add(message)
+    db.session.commit()
+    return "Message sent"
+
+@app.route('/createServer/<name>', methods=['POST'])
+@auth.login_required
+def create_server(name):
+    server = Server(name, get_user(auth)) 
+    db.session.add(server)
+    db.session.commit()
+    return str(server.id)
 
 if __name__ == '__main__':
     db.create_all()
