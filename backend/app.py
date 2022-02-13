@@ -38,6 +38,9 @@ class User(db.Model):
     def is_a_member(self, server):
         server = Server.query.get(server)
         return server in self.servers or server in self.servers_owned
+    def is_an_owner(self, server):
+        server = Server.query.get(server)
+        return server in self.servers_owned
 
 class Server(db.Model):
     __tablename__ = "servers"
@@ -65,10 +68,10 @@ class Message(db.Model):
     file_id = db.Column(db.Integer, db.ForeignKey("files.id"))
     file = db.relationship("File", uselist=False, back_populates="message") #one to one
 
-    def __init__(self, server, user, text, file):
+    def __init__(self, server, user, text, file = None):
         self.server = server
         self.user = user
-        date_time = datetime.now()
+        self.date_time = datetime.now()
         self.text = text
         self.file = file
 
@@ -129,19 +132,83 @@ def send_message():
         return "Not allowed", 403
 
     message_text = request.form['text']
-    if 'file' in request.files:
-        file = request.files['file']
-    if file:
-        filename = secure_filename(file.filename)
-        saved_filename = str(uuid.uuid4())
-        path = os.path.join(app.config['UPLOAD_FOLDER'], saved_filename)
-        file.save(path)
-        file_db = File(False, filename, path)
-        db.session.add(file_db)
-    message = Message(Server.query.get(server_id), get_user(auth), message_text, file_db)
-    db.session.add(message)
+    try:
+        if 'file' in request.files:
+            file = request.files['file']
+        if file:
+            filename = secure_filename(file.filename)
+            saved_filename = str(uuid.uuid4())
+            path = os.path.join(app.config['UPLOAD_FOLDER'], saved_filename)
+            file.save(path)
+            file_db = File(False, filename, path)
+            db.session.add(file_db)
+        message = Message(Server.query.get(server_id), get_user(auth), message_text, file_db)
+        db.session.add(message)
+        db.session.commit()
+        return "Message sent"
+    except Exception as e:
+        message = Message(Server.query.get(server_id), get_user(auth), message_text)
+        db.session.add(message)
+        db.session.commit()
+        return "Message sent"
+
+@app.route('/getLastMessages', methods=['GET'])
+@auth.login_required
+def get_last_messages():
+    req = request.json
+    try:
+        server = req['serverId']
+        count = req['count']
+    except Exception as e:
+        return "Wrong parameters", 400
+    if req['serverId'] == '' or req['count'] == '':
+       return "Not enough parameters", 400
+    if not get_user(auth).is_a_member(server):
+        return "Not allowed", 403
+    messages = Message.query.filter_by(server_id = req['serverId'])\
+           .order_by(Message.date_time.desc())\
+           .limit(req['count'])
+    response = {"messages" : []}
+    for msg in messages:
+        message = {"id": msg.id, "text": msg.text, "user": msg.user_id, "file": msg.file_id, "dateTime": msg.date_time}
+        response['messages'].append(message)
+    return response
+    
+@app.route('/addToServer', methods=['POST'])
+@auth.login_required
+def add_to_server():
+    req = request.json
+    server_id = req['server_id']
+    username = req['username']
+    if not get_user(auth).is_an_owner(server_id):
+        return "User is not an owner", 401
+    user = User.query.filter_by(username=username).first()
+    if user is None:
+        return "No such user", 400
+    user.servers.append(Server.query.get(server_id))
+    db.session.add(user)
     db.session.commit()
-    return "Message sent"
+    return "Added to server"
+
+@app.route('/availableServers', methods=['GET'])
+@auth.login_required
+def get_available_servers():
+    user = get_user(auth)
+    servers = {'servers': []}
+    for server in user.servers:
+        servers['servers'].append({'name': server.name, 'id': server.id})
+    for server in user.servers_owned:
+        servers['servers'].append({'name': server.name, 'id': server.id})
+    return servers
+
+@app.route('/ownedServers', methods=['GET'])
+@auth.login_required
+def get_servers_owned():
+    user = get_user(auth)
+    servers = {'servers': []}
+    for server in user.servers_owned:
+        servers['servers'].append({'name': server.name, 'id': server.id})
+    return servers
 
 @app.route('/createServer/<name>', methods=['POST'])
 @auth.login_required
