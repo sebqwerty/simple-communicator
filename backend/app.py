@@ -137,10 +137,11 @@ def send_message():
             file = request.files['file']
         if file:
             filename = secure_filename(file.filename)
+            is_image = filename.endswith('.png') or filename.endswith('jpg') or filename.endswith('bmp')
             saved_filename = str(uuid.uuid4())
             path = os.path.join(app.config['UPLOAD_FOLDER'], saved_filename)
             file.save(path)
-            file_db = File(False, filename, path)
+            file_db = File(is_image, filename, path)
             db.session.add(file_db)
         message = Message(Server.query.get(server_id), get_user(auth), message_text, file_db)
         db.session.add(message)
@@ -170,7 +171,12 @@ def get_last_messages():
            .limit(req['count'])
     response = {"messages" : []}
     for msg in messages:
-        message = {"id": msg.id, "text": msg.text, "user": msg.user_id, "file": msg.file_id, "dateTime": msg.date_time}
+        if msg.file is not None:
+            message = {"id": msg.id, "text": msg.text, "user": msg.user_id, \
+                "file": {"id": msg.file.id, "isImage": msg.file.is_image}, "dateTime": msg.date_time}
+        else:
+            message = {"id": msg.id, "text": msg.text, "user": msg.user_id, \
+                "file": msg.file, "dateTime": msg.date_time}
         response['messages'].append(message)
     return response
     
