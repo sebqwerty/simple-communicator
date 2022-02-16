@@ -164,10 +164,10 @@ def get_last_messages(server_id, count):
     response = {"messages" : []}
     for msg in messages:
         if msg.file is not None:
-            message = {"id": msg.id, "text": msg.text, "user": msg.user_id, \
+            message = {"id": msg.id, "text": msg.text, "user_id": msg.user_id, "username": msg.user.username, \
                 "file": {"id": msg.file.id, "isImage": msg.file.is_image}, "dateTime": msg.date_time}
         else:
-            message = {"id": msg.id, "text": msg.text, "user": msg.user_id, \
+            message = {"id": msg.id, "text": msg.text, "user_id": msg.user_id, "username": msg.user.username, \
                 "file": msg.file, "dateTime": msg.date_time}
         response['messages'].append(message)
     return response
