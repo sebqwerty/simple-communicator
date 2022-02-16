@@ -153,22 +153,14 @@ def send_message():
         db.session.commit()
         return "Message sent"
 
-@app.route('/getLastMessages', methods=['GET'])
+@app.route('/getLastMessages/<server_id>/<count>', methods=['GET'])
 @auth.login_required
-def get_last_messages():
-    req = request.json
-    try:
-        server = req['serverId']
-        count = req['count']
-    except Exception as e:
-        return "Wrong parameters", 400
-    if req['serverId'] == '' or req['count'] == '':
-       return "Not enough parameters", 400
-    if not get_user(auth).is_a_member(server):
+def get_last_messages(server_id, count):
+    if not get_user(auth).is_a_member(server_id):
         return "Not allowed", 403
-    messages = Message.query.filter_by(server_id = req['serverId'])\
+    messages = Message.query.filter_by(server_id = server_id)\
            .order_by(Message.date_time.desc())\
-           .limit(req['count'])
+           .limit(count)
     response = {"messages" : []}
     for msg in messages:
         if msg.file is not None:
