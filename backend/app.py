@@ -217,6 +217,12 @@ def create_server(name):
     db.session.commit()
     return str(server.id)
 
+@app.route('/login', methods=['GET'])
+@auth.login_required
+def login():
+    user = get_user(auth)
+    return str(user.id)
+
 if __name__ == '__main__':
     db.create_all()
 
