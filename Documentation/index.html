@@ -84,7 +84,7 @@
                                      <div class="heading">
                                         <div class="name">
                                             <span class="POST method" >POST</span>
-                                            http://localhost:5000/sendMessage <span class="lock-icon"></span>
+                                            /sendMessage <span class="lock-icon"></span>
                                         </div>
                                      </div>
                                     <div class="url">http://localhost:5000/sendMessage</div>
@@ -173,7 +173,7 @@ Message sent</code>
                                      <div class="heading">
                                         <div class="name">
                                             <span class="GET method" >GET</span>
-                                            http://localhost:5000/file/1 <span class="lock-icon"></span>
+                                            /file/{file_id} <span class="lock-icon"></span>
                                         </div>
                                      </div>
                                     <div class="url">http://localhost:5000/file/1</div>
@@ -221,7 +221,7 @@ GET {{baseUrl}}/file/2</code>
                                             <div>
                                                 <pre class="click-to-expand-wrapper is-snippet-wrapper " data-title="http://localhost:5000/file/1">
                                                     <code class="is-highlighted">
- File_content</code>
+ sadfasf</code>
                                                 </pre>
                                             </div>
                                         </div>
@@ -237,7 +237,7 @@ GET {{baseUrl}}/file/2</code>
                                      <div class="heading">
                                         <div class="name">
                                             <span class="POST method" >POST</span>
-                                            http://localhost:5000/register <span class="lock-icon"></span>
+                                            /register <span class="lock-icon"></span>
                                         </div>
                                      </div>
                                     <div class="url">http://localhost:5000/register</div>
@@ -246,7 +246,7 @@ GET {{baseUrl}}/file/2</code>
                                         <div class="body-heading">BODY <span class="body-type">raw</span></div>
                                         <hr>
                                             <div class="raw-body code-snippet">
-                                              <pre class="body-block click-to-expand-wrapper is-snippet-wrapper " data-title="http://localhost:5000/register">
+                                              <pre class="body-block click-to-expand-wrapper is-snippet-wrapper " data-title="/register">
                                                   <code>
                                                     
 {"username": "dina", "password": "haslo"}
@@ -319,7 +319,7 @@ POST {{baseUrl}}/register
                                      <div class="heading">
                                         <div class="name">
                                             <span class="POST method" >POST</span>
-                                            http://localhost:5000/createServer/test_server <span class="lock-icon"></span>
+                                            /createServer/{server_name} <span class="lock-icon"></span>
                                         </div>
                                      </div>
                                     <div class="url">http://localhost:5000/createServer/test_server</div>
@@ -328,7 +328,7 @@ POST {{baseUrl}}/register
                                         <div class="body-heading">BODY <span class="body-type">raw</span></div>
                                         <hr>
                                             <div class="raw-body code-snippet">
-                                              <pre class="body-block click-to-expand-wrapper is-snippet-wrapper " data-title="http://localhost:5000/createServer/test_server">
+                                              <pre class="body-block click-to-expand-wrapper is-snippet-wrapper " data-title="/createServer/{server_name}">
                                                   <code>
                                                     
 
@@ -398,24 +398,10 @@ POST {{baseUrl}}/createServer/test_server
                                      <div class="heading">
                                         <div class="name">
                                             <span class="GET method" >GET</span>
-                                            http://localhost:5000/getLastMessages <span class="lock-icon"></span>
+                                            /getLastMessages/{server_id}/{count} <span class="lock-icon"></span>
                                         </div>
                                      </div>
-                                    <div class="url">http://localhost:5000/getLastMessages</div>
-                                    
-                                    <div class="request-body">
-                                        <div class="body-heading">BODY <span class="body-type">raw</span></div>
-                                        <hr>
-                                            <div class="raw-body code-snippet">
-                                              <pre class="body-block click-to-expand-wrapper is-snippet-wrapper " data-title="http://localhost:5000/getLastMessages">
-                                                  <code>
-                                                    
-{"serverId": 1, "count": 19}
-                                                  </code>
-                                              </pre>
-                                            </div>
-                                        
-                                    </div>
+                                    <div class="url">{{baseUrl}}/getLastMessages/{{server_id}}/{{count}}</div>
                                     
                                 </div>
                             </div>
@@ -443,8 +429,7 @@ POST {{baseUrl}}/createServer/test_server
                                         <div>
                                             <pre class="click-to-expand-wrapper is-snippet-wrapper " data-title="http://localhost:5000/getLastMessages">
                                                 <code class="is-highlighted">
-GET {{baseUrl}}/getLastMessages
-{"serverId": 1, "count": 19}</code>
+GET {{baseUrl}}/getLastMessages/1/10</code>
                                             </pre>
                                         </div>
                                     </div>
@@ -471,7 +456,8 @@ GET {{baseUrl}}/getLastMessages
             },
             "id": 4,
             "text": "rd",
-            "user": 2
+            "user_id": 2,
+            "username": "admin2"
         },
         {
             "dateTime": "Tue, 15 Feb 2022 19:19:44 GMT",
@@ -481,14 +467,16 @@ GET {{baseUrl}}/getLastMessages
             },
             "id": 3,
             "text": "rd",
-            "user": 2
+            "user_id": 2,
+            "username": "admin2"
         },
         {
             "dateTime": "Tue, 15 Feb 2022 19:18:33 GMT",
             "file": null,
             "id": 2,
             "text": "rd",
-            "user": 2
+            "user_id": 2,
+            "username": "admin2"
         },
         {
             "dateTime": "Sun, 13 Feb 2022 10:43:22 GMT",
@@ -498,7 +486,8 @@ GET {{baseUrl}}/getLastMessages
             },
             "id": 1,
             "text": "rd",
-            "user": 2
+            "user_id": 2,
+            "username": "admin2"
         }
     ]
 }</code>
@@ -517,7 +506,7 @@ GET {{baseUrl}}/getLastMessages
                                      <div class="heading">
                                         <div class="name">
                                             <span class="POST method" >POST</span>
-                                            http://localhost:5000/addToServer <span class="lock-icon"></span>
+                                            /addToServer <span class="lock-icon"></span>
                                         </div>
                                      </div>
                                     <div class="url">http://localhost:5000/addToServer</div>
@@ -526,7 +515,7 @@ GET {{baseUrl}}/getLastMessages
                                         <div class="body-heading">BODY <span class="body-type">raw</span></div>
                                         <hr>
                                             <div class="raw-body code-snippet">
-                                              <pre class="body-block click-to-expand-wrapper is-snippet-wrapper " data-title="http://localhost:5000/addToServer">
+                                              <pre class="body-block click-to-expand-wrapper is-snippet-wrapper " data-title="/addToServer">
                                                   <code>
                                                     
 {"username": "admin2", "server_id": 1}
@@ -596,7 +585,7 @@ Added to server</code>
                                      <div class="heading">
                                         <div class="name">
                                             <span class="GET method" >GET</span>
-                                            http://localhost:5000/availableServers <span class="lock-icon"></span>
+                                            /availableServers <span class="lock-icon"></span>
                                         </div>
                                      </div>
                                     <div class="url">http://localhost:5000/availableServers</div>
@@ -667,7 +656,7 @@ GET {{baseUrl}}/availableServers</code>
                                      <div class="heading">
                                         <div class="name">
                                             <span class="GET method" >GET</span>
-                                            http://localhost:5000/ownedServers <span class="lock-icon"></span>
+                                            /ownedServers <span class="lock-icon"></span>
                                         </div>
                                      </div>
                                     <div class="url">http://localhost:5000/ownedServers</div>
@@ -736,6 +725,48 @@ GET {{baseUrl}}/ownedServers</code>
                             </div>
                             
                         </div>
+                        <div class="row row-no-padding row-eq-height">
+                            <div class="col-md-6 col-xs-12 section">
+                                <div class="api-information" id="9">
+                                     <div class="heading">
+                                        <div class="name">
+                                            <span class="GET method" >GET</span>
+                                            /login <span class="lock-icon"></span>
+                                        </div>
+                                     </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-xs-12 examples">
+                                <div class="sample-request">
+                                    <div class="heading">
+                                        <span>Example Request</span>
+                                    </div>
+                                    <div class="responses-index">
+                                        <div class="dropdown response-name">
+                                            <button class="btn   responses-dropdown truncate" type="button" id="f678f251-1750-4e3a-b5d8-05b4c6b0fb37_dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                              <span id="selected" class="response-name-label">/login</span>
+                                                <span class="caret"></span>
+
+                                            </button>
+
+                                            <ul class="dropdown-menu" aria-labelledby="f678f251-1750-4e3a-b5d8-05b4c6b0fb37_dropdown">
+                                                <li class="truncate" data-request-info="9" data-response-info="response_9">/login</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="formatted-requests " data-request-id="9"  data-id="response_9">
+                                    <div class="request code-snippet">
+                                        <div>
+                                            <pre class="click-to-expand-wrapper is-snippet-wrapper " data-title="/login">
+                                                <code class="is-highlighted">None</code>
+                                            </pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
                     </article>
                 </div>
             </div>
@@ -753,7 +784,7 @@ GET {{baseUrl}}/ownedServers</code>
     <script src="js/bootstrap-treeview.min.js"></script>
     <script src="js/main.min.js"></script>
     <script type="application/javascript">
-        var data = [{'text': 'http://localhost:5000/sendMessage', 'href': '#1', 'method': 'POST'}, {'text': 'http://localhost:5000/file/1', 'href': '#2', 'method': 'GET'}, {'text': 'http://localhost:5000/register', 'href': '#3', 'method': 'POST'}, {'text': 'http://localhost:5000/createServer/test_server', 'href': '#4', 'method': 'POST'}, {'text': 'http://localhost:5000/getLastMessages', 'href': '#5', 'method': 'GET'}, {'text': 'http://localhost:5000/addToServer', 'href': '#6', 'method': 'POST'}, {'text': 'http://localhost:5000/availableServers', 'href': '#7', 'method': 'GET'}, {'text': 'http://localhost:5000/ownedServers', 'href': '#8', 'method': 'GET'}]
+        var data = [{'text': '/sendMessage', 'href': '#1', 'method': 'POST'}, {'text': '/file/{file_id}', 'href': '#2', 'method': 'GET'}, {'text': '/register', 'href': '#3', 'method': 'POST'}, {'text': '/createServer/{server_name}', 'href': '#4', 'method': 'POST'}, {'text': '/getLastMessages/{server_id}/{count}', 'href': '#5', 'method': 'GET'}, {'text': '/addToServer', 'href': '#6', 'method': 'POST'}, {'text': '/availableServers', 'href': '#7', 'method': 'GET'}, {'text': '/ownedServers', 'href': '#8', 'method': 'GET'}, {'text': '/login', 'href': '#9', 'method': 'GET'}]
         $('#tree').treeview({
             data: data,
             levels: 10,
