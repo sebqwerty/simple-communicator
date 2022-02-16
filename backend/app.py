@@ -3,12 +3,13 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
+from flask_cors import CORS
 from datetime import datetime
 import os
 import uuid
 
 app = Flask(__name__)
-
+CORS(app)
 auth = HTTPBasicAuth()
 
 UPLOAD_FOLDER = '/app/uploads' 
