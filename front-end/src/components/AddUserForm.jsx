@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import axios from 'axios';
 
-const AddUserForm = ({test}) => {
+const AddUserForm = () => {
   const [value, setValue] = useState('');
 
   const handleChange = (event) => {

@@ -14,7 +14,6 @@ const Chat = () => {
 
   useEffect(() => getMessages().then(response => {
     const messages = response.data.messages;
-    console.log(messages)
     setMessages(messages);
   }), [])
 
@@ -23,7 +22,7 @@ const Chat = () => {
     const password = localStorage.getItem('password');
     return await axios
       .get(
-        `http://127.0.0.1:5000/getLastMessages/${localStorage.getItem("chatId")}/10`, { 
+        `http://127.0.0.1:5000/getLastMessages/${localStorage.getItem("chatId")}/40`, { 
           auth: {password: password, username: username}
         });
   }
@@ -73,13 +72,17 @@ const Chat = () => {
   if (!localStorage.getItem("chatId")) return <div />;
 
   return (
-    <div className="chat-feed"> 
-      <div className="chat-title-container">
-        <div className="chat-title">
-            {localStorage.getItem("chatName")} - {localStorage.getItem("chatId")}
+    <div className="chat">
+      <div className="chat-feed"> 
+        
+          <div className="chat-title">
+              {localStorage.getItem("chatName")} - {localStorage.getItem("chatId")}
+          </div>
+
+        <div className="chat-messages">
+          {renderMessages()}
         </div>
       </div>
-      {renderMessages()}
       <div className="message-form-container">
         <MessageForm />
         <AddUserForm />

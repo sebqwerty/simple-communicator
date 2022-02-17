@@ -11,23 +11,25 @@
 .chat-feed {
   height: 100%;
   width: 100%;
-  overflow-y: scroll;
   background-color: rgb(240, 240, 240);
 }
 
 .chat-title-container {
-  position: relative;
+  /* position: fixed; */
   float: left;
-  height: calc(100% - 20px);
-  width: 100%;
+  height: fit-content;
+  width: 80%;
   padding: 18px;
-  text-align: center;
 }
 
 .chat-title {
+  height: fit-content;
+  width: 100%;
+  padding: 18px;
   color: #7554a0;
   font-weight: 800;
   font-size: 24px;
+  text-align: center;
 }
 
 .message-row {
@@ -88,7 +90,7 @@
 
 .message-form-container {
   position: absolute;
-  bottom: 0px;
+  height: 80px;
   width: 80%;
   padding: 18px;
   background-color: rgb(240, 240, 240);
@@ -222,20 +224,19 @@
 }
 
 .chat{
-  display: inline-block;
-  height: 100%;
+  float: left;
+  height: calc(100% - 80px);
   width: 80%;
 }
 .chatList{
-  display: inline-block;
-  overflow-y: scroll;
+  float: left;
   height: 100%;
   width: 20%;
 }
 
 .create-chat-container {
   position: absolute;
-  bottom: 0px;
+  height: 80px;
   width: 20%;
   padding: 18px;
   background-color: rgb(240, 240, 240);
@@ -259,12 +260,13 @@
 }
 
 .chats{
-  height: 100%;
-  width: 20%;
+  overflow-y: scroll;
+  height: calc(100% - 80px);
+  width: 100%;
 }
 
 .main {
-  height: 100%;
+  height: calc(100vh - 50px);
   width: 100%;
 }
 
@@ -276,4 +278,21 @@
   border-radius: 6px;
   border: 1px solid #3b2a50;
   background-color: white;
+}
+
+.chatBox{
+  float: left;
+  font-size: 25px;
+  width: calc(100% - 20px);
+  margin: 10px;
+  text-align: center;
+}
+
+.chatBox:hover {
+  color: blue;
+}
+
+.chat-messages {
+  height: calc(100% - 80px);
+  overflow-y: scroll;
 }
