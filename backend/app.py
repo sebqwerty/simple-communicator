@@ -136,20 +136,20 @@ def send_message():
     try:
         if 'file' in request.files:
             file = request.files['file']
-        if file:
-            filename = secure_filename(file.filename)
-            is_image = filename.endswith('.png') or filename.endswith('jpg') or filename.endswith('bmp')
-            saved_filename = str(uuid.uuid4())
-            path = os.path.join(app.config['UPLOAD_FOLDER'], saved_filename)
-            file.save(path)
-            file_db = File(is_image, filename, path)
-            db.session.add(file_db)
-        message = Message(Server.query.get(server_id), get_user(auth), message_text, file_db)
+    except Exception as e:
+        message = Message(Server.query.get(server_id), get_user(auth), message_text)
         db.session.add(message)
         db.session.commit()
         return "Message sent"
-    except Exception as e:
-        message = Message(Server.query.get(server_id), get_user(auth), message_text)
+    if file:
+        filename = secure_filename(file.filename)
+        is_image = filename.endswith('.png') or filename.endswith('jpg') or filename.endswith('bmp')
+        saved_filename = str(uuid.uuid4())
+        path = os.path.join(app.config['UPLOAD_FOLDER'], saved_filename)
+        file.save(path)
+        file_db = File(is_image, filename, path)
+        db.session.add(file_db)
+        message = Message(Server.query.get(server_id), get_user(auth), message_text, file_db)
         db.session.add(message)
         db.session.commit()
         return "Message sent"
