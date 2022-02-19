@@ -1,8 +1,10 @@
 # simple-communicator
 A simple chat application consisting of a backend created in Python using Flask and frontend using React.
+
+
 Backend
 -------
-Backed uses Python3 and Flask
+Backend uses Python3 and Flask
 
 Requirements:
 >pip install flask flask_sqlalchemy flask_httpauth flask_cors
