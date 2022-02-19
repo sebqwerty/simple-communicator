@@ -12,7 +12,7 @@ app = Flask(__name__)
 CORS(app)
 auth = HTTPBasicAuth()
 
-UPLOAD_FOLDER = '/app/uploads' 
+UPLOAD_FOLDER = './' 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'

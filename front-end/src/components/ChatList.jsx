@@ -7,7 +7,7 @@ const ChatList = (props) => {
   const [servers, setServers] = useState(undefined);
 
   useEffect(() => availableChats().then(response => {
-    const servers = response.data.servers.map(server => <div onClick={()=> {localStorage.setItem("chatId", server.id); localStorage.setItem("chatName", server.name); window.location.reload();}}> {server.name} </div>);
+    const servers = response.data.servers.map(server => <div className="chatBox" onClick={()=> {localStorage.setItem("chatId", server.id); localStorage.setItem("chatName", server.name); window.location.reload();}}> {server.name} </div>);
     setServers(servers);
   }), [])
 
@@ -39,26 +39,25 @@ const ChatList = (props) => {
   };
 
   return (
-    <div> 
+    <div className="chatList">
       <div className="chats">
         {servers}
       </div>
       
       <div className="create-chat-container">
-    
-      <form className="create-chat-form" onSubmit={handleSubmit}>
-    
-        <input
-          className="chat-name"
-          placeholder="Create chat..."
-          value={value}
-          onChange={handleChange}
-          onSubmit={handleSubmit}
-        />
-        <button type="submit" className="send-button">
-          +
-        </button>
-      </form>
+
+        <form className="create-chat-form" onSubmit={handleSubmit}>
+          <input
+            className="chat-name"
+            placeholder="Create chat..."
+            value={value}
+            onChange={handleChange}
+            onSubmit={handleSubmit}
+          />
+          <button type="submit" className="send-button">
+            +
+          </button>
+        </form>
       </div>
     </div>
   );
