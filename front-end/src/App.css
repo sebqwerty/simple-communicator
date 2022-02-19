@@ -6,6 +6,13 @@
   letter-spacing: 0.5px;
 }
 
+a {
+  color: white;
+}
+a:hover {
+  color: aqua;
+}
+
 /* CUSTOM FEED */
 
 .chat-feed {

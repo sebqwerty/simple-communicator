@@ -21,7 +21,7 @@ const MessageForm = ({test}) => {
     const text = value.trim();
     const bodyFormData = new FormData();
 
-    if (text.length > 0) {
+    if (text.length > 0 || selectedFile) {
       
       bodyFormData.append("server_id", localStorage.getItem('chatId'));
       bodyFormData.append("text", text);

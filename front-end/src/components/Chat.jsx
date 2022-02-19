@@ -37,13 +37,27 @@ const Chat = () => {
 
     return keys.map((key, index) => {
       const i = parseInt(key);
+
+      
       const message = {
         text: messages[i].text,
         user: {
           id: messages[i]["user_id"],
           name: messages[i].username
+        },
+        file: undefined,
+      }
+
+      if(messages[i].file !== null) {
+        const username = localStorage.getItem('username');
+        const password = localStorage.getItem('password');
+        message.file = {
+          href: `http://${username}:${password}@127.0.0.1:5000/file/${messages[i].file.id}`,
+          isImage: messages[i].file.isImage
         }
       }
+
+      console.log(messages[i].file);
 
       const lastMessage = i === (keys.length - 1) ? null : {
         text: messages[i + 1].text,
@@ -52,7 +66,7 @@ const Chat = () => {
           name: messages[i + 1].username
         }
       };
-
+  
       const isMymessage = parseInt(localStorage.getItem("userId")) === message.user.id
 
       return (
