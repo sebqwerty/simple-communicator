@@ -133,22 +133,20 @@ def send_message():
         return "Not allowed", 403
 
     message_text = request.form['text']
-    try:
-        if 'file' in request.files:
-            file = request.files['file']
-        if file:
-            filename = secure_filename(file.filename)
-            is_image = filename.endswith('.png') or filename.endswith('jpg') or filename.endswith('bmp')
-            saved_filename = str(uuid.uuid4())
-            path = os.path.join(app.config['UPLOAD_FOLDER'], saved_filename)
-            file.save(path)
-            file_db = File(is_image, filename, path)
-            db.session.add(file_db)
+    if 'file' in request.files:
+        file = request.files['file']
+        filename = secure_filename(file.filename)
+        is_image = filename.endswith('.png') or filename.endswith('jpg') or filename.endswith('bmp')
+        saved_filename = str(uuid.uuid4())
+        path = os.path.join(app.config['UPLOAD_FOLDER'], saved_filename)
+        file.save(path)
+        file_db = File(is_image, filename, path)
+        db.session.add(file_db)
         message = Message(Server.query.get(server_id), get_user(auth), message_text, file_db)
         db.session.add(message)
         db.session.commit()
         return "Message sent"
-    except Exception as e:
+    else:
         message = Message(Server.query.get(server_id), get_user(auth), message_text)
         db.session.add(message)
         db.session.commit()
@@ -160,7 +158,7 @@ def get_last_messages(server_id, count):
     if not get_user(auth).is_a_member(server_id):
         return "Not allowed", 403
     messages = Message.query.filter_by(server_id = server_id)\
-           .order_by(Message.date_time.desc())\
+           .order_by(Message.id.desc())\
            .limit(count)
     response = {"messages" : []}
     for msg in messages:
